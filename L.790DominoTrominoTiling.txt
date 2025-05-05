@@ -1,0 +1,53 @@
+######tabulation
+class Solution {
+    public int numTilings(int n) {
+        int MOD = 1000000007;
+
+        if (n == 0) return 1;
+        if (n == 1) return 1;
+        if (n == 2) return 2;
+
+        int[] dp = new int[n + 1];
+        dp[0] = 1;  
+        dp[1] = 1;
+        dp[2] = 2;
+
+        for (int i = 3; i <= n; i++) {
+            dp[i] = (int)((2L * dp[i - 1] + dp[i - 3]) % MOD);
+        }
+
+        return dp[n];
+    }
+}
+
+
+
+######## Memoization
+class Solution {
+    int MOD = 1000000007;
+    public int numTilings(int n) {
+        Long dp[][] = new Long[n+1][2];
+        return (int)recur(0,n,false,dp);
+    }
+
+    public long recur(int index, int n , boolean needToPlace,Long dp[][]){
+
+        if(index>n){
+            return 0;
+        }
+        if(index==n){
+            return needToPlace?0:1;
+        }
+        if(dp[index][needToPlace?1:0]!=null){
+            return dp[index][needToPlace?1:0];
+        }
+        long res=0;
+        if(needToPlace){
+            res= (recur(index+1,n,false,dp)+recur(index+1,n,true,dp))%MOD; 
+        }else{
+            res=(recur(index+1,n ,false,dp) + recur(index+2,n,false,dp) + 2*recur(index+2,n,true,dp))%MOD;
+        }
+
+        return dp[index][needToPlace?1:0]=res;
+    }
+}
