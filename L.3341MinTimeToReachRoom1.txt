@@ -1,0 +1,47 @@
+class Solution {
+    public int minTimeToReach(int[][] moveTime) {
+        PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a->a[2]));
+
+        int matrix[][] = new int[moveTime.length][moveTime[0].length];
+
+        for(int obj[]:matrix){
+            Arrays.fill(obj,Integer.MAX_VALUE);
+        }
+
+        int delrow[] = new int[]{-1,0,1,0};
+        int delcol[] = new int[]{0,1,0,-1};
+        pq.offer(new int[]{0,0,0});
+
+        while(!pq.isEmpty()){
+
+            int node[] = pq.poll();
+
+            int rw = node[0];
+            int cl = node[1];
+            int currTime= node[2];
+
+            if(rw ==moveTime.length-1 && cl ==moveTime[0].length-1){
+                return currTime;
+            }
+
+            for(int i=0;i<4;i++){
+
+                int nrow = rw+delrow[i];
+                int ncol = cl+delcol[i];
+
+                if(nrow>=0 && ncol>=0 && nrow<moveTime.length && ncol<moveTime[0].length){
+
+                    int waitTime = Math.max(0 , moveTime[nrow][ncol]-currTime);
+
+                    int newTime = waitTime+currTime+1;
+
+                    if(matrix[nrow][ncol]>newTime){
+                        matrix[nrow][ncol] = newTime;
+                        pq.offer(new int[]{nrow,ncol,newTime});
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+}
