@@ -1,0 +1,85 @@
+class Solution {
+    int MOD = 1000000007;
+    public int countBalancedPermutations(String num) {
+        int n = num.length();
+        int sum  =0;
+        int digit[] = new int[num.length()];
+
+        int digitFreq[] = new int[10];
+
+
+        for(int i=0;i<num.length();i++){
+            digit[i] = num.charAt(i)-'0';
+            sum+=digit[i];
+            digitFreq[num.charAt(i)-'0']++;
+        }
+
+        if(sum%2!=0){
+            return 0;
+        }
+
+        int target= sum/2;
+        int noOfPosition = n/2;
+        long fact[] = new long[n+1];
+        long invfact[] = new long[n+1];
+        precomputeFactorial(fact,invfact);
+
+        Long dp[][][] = new Long[n+1][target+1][noOfPosition+1];
+        long ways = solve(0, target, noOfPosition,dp,digit);
+
+        long ans = ways *fact[noOfPosition] %MOD * fact[n-noOfPosition]%MOD;
+
+        for(int freq : digitFreq ){
+            ans = ans*invfact[freq]%MOD;
+        }
+        return (int)ans;
+        
+    }
+    public long solve(int index , int target , int noofPositions , Long dp[][][], int digits[]){
+
+        if(target==0 && noofPositions==0){
+            return 1;
+        }
+
+        if(index==digits.length || target<0 || noofPositions<0){
+            return 0;
+        }
+
+        if(dp[index][target][noofPositions]!=null){
+            return dp[index][target][noofPositions];
+        }
+
+        long ways = solve(index+1,target,noofPositions,dp,digits) + solve(index+1,target-digits[index],noofPositions-1,dp,digits);
+
+        return dp[index][target][noofPositions]=ways%MOD;
+    }
+    public void precomputeFactorial(long fact[], long invFact[]) {
+        fact[0] = 1;
+        invFact[0] = 1;
+
+        // Compute factorials % MOD
+        for (int i = 1; i < fact.length; i++) {
+            fact[i] = (fact[i - 1] * i) % MOD;
+        }
+
+        // Compute inverse factorials using modular inverse
+        invFact[fact.length - 1] = modInverse(fact[fact.length - 1]);
+        for (int i = fact.length - 2; i >= 1; i--) {
+            invFact[i] = invFact[i + 1] * (i + 1) % MOD;
+        }
+    }
+
+    private long modInverse(long x) {
+        return modPow(x, MOD - 2);
+    }
+
+     private long modPow(long base, long exp) {
+        long result = 1;
+        while (exp > 0) {
+            if ((exp & 1) == 1) result = result * base % MOD;
+            base = base * base % MOD;
+            exp >>= 1;
+        }
+        return result;
+    }
+}
