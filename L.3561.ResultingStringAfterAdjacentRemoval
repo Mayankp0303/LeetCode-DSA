@@ -1,0 +1,26 @@
+class Solution {
+    public String resultingString(String s) {
+        Stack<Character> st = new Stack<>();
+         for(int i=0;i<s.length();i++){
+            char curr = s.charAt(i);
+            if(!st.isEmpty()){
+                
+                char top =st.peek();
+
+                if(Math.abs(top-curr)==1 || Math.abs(top-curr)==25){
+                    st.pop();
+                    continue;
+                }
+                
+            }
+            st.push(curr);
+        }
+
+
+        StringBuilder ans = new StringBuilder();
+        for(char c: st){
+            ans.append(c);
+        }
+        return ans.toString();
+    }
+}
